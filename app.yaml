@@ -10,7 +10,7 @@ handlers:
   upload: favicon\.ico
 
 - url: .*
-  script: guestbook.application
+  script: find.application
 
 libraries:
 - name: webapp2
