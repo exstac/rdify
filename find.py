@@ -57,8 +57,8 @@ class MainPage(webapp2.RequestHandler):
             artists = ', '.join([artist['name'] for artist in item['artists']])
             track = item['name']
             album = item['album']['name']
-            swe_cat = 'available' if 'SE' in item['album']['available_markets'] else 'unavailable'
-            result.append('<a href="%s">%s - %s [%s] (%s)</a>' % (open_link, artists, track, album, swe_cat))
+            catalog = 'available' if 'US' in item['album']['available_markets'] else 'unavailable'
+            result.append('<a href="%s">%s - %s [%s] (%s)</a>' % (open_link, artists, track, album, catalog))
         return result
 
 
