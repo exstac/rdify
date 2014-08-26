@@ -33,7 +33,7 @@ class MainPage(webapp2.RequestHandler):
             uri = self.request.get('content')
             available, unavailable = self.fetch(uri)
 
-        self.response.write('<p>Found %d track%s:</p>' % (len(available), s if len(available) > 1 else ''))
+        self.response.write('<p>Found %d track%s:</p>' % (len(available), 's' if len(available) > 1 else ''))
         self.response.write('<ul>')
         for result in available:
             self.response.write('<li>%s</li>' % (result,))
