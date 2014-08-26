@@ -11,7 +11,7 @@ import webapp2
 MAIN_PAGE_HEADER_TEMPLATE = """\
 <html><body>
     <form action="/" method="post">
-      <div><input style="width:200pt" type=text name="content"></input> <input type="submit" value="Search"></div>
+      <div><input style="width:200pt" type=text name="content"></input> <input type="submit" name="rdio" value="Rdio link"><input type="submit" name="spotify" value="Search Spotify"></div>
     </form>
 """
 MAIN_PAGE_FOOTER_TEMPLATE = """\
@@ -26,8 +26,13 @@ class MainPage(webapp2.RequestHandler):
 
     def post(self):
         self.response.write(MAIN_PAGE_HEADER_TEMPLATE)
-        uri = self.request.get('content')
-        results = self.fetch(uri)
+        if self.request.get('spotify'):
+            query = self.request.get('content')
+            results = self.spotify(query=query)
+        else:
+            uri = self.request.get('content')
+            results = self.fetch(uri)
+
         self.response.write('<p>Found %d tracks:</p>' % (len(results),))
         self.response.write('<ul>')
         for result in results:
@@ -42,14 +47,15 @@ class MainPage(webapp2.RequestHandler):
         if 'result' in parsed:
             result = parsed['result']
             if 'artist' in result:
-                return self.spotify(result['artist'], result['name'])
+                return self.spotify(artist=result['artist'], track=result['name'])
             else:
                 return '<p>Unable to fetch track info<p/>'
         return response
 
-    def spotify(self, artist, track):
+    def spotify(self, query=None, artist=None, track=None):
         baseurl = 'https://api.spotify.com/v1/search?'
-        query = urllib.urlencode({'q': 'artist:%s track:%s' % (artist, track,), 'type': 'track'})
+        search = '%s %s %s' % (query if query else '', 'artist:%s' % artist if artist else '', 'track:%s' % track if track else '')
+        query = urllib.urlencode({'q': search.strip(), 'type': 'track'})
         result = []
         response = json.loads(urllib.urlopen(baseurl + query).read())
         for item in response['tracks']['items']:
