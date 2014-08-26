@@ -28,16 +28,23 @@ class MainPage(webapp2.RequestHandler):
         self.response.write(MAIN_PAGE_HEADER_TEMPLATE)
         if self.request.get('spotify'):
             query = self.request.get('content')
-            results = self.spotify(query=query)
+            available, unavailable = self.spotify(query=query)
         else:
             uri = self.request.get('content')
-            results = self.fetch(uri)
+            available, unavailable = self.fetch(uri)
 
-        self.response.write('<p>Found %d tracks:</p>' % (len(results),))
+        self.response.write('<p>Found %d tracks:</p>' % (len(available),))
         self.response.write('<ul>')
-        for result in results:
+        for result in available:
             self.response.write('<li>%s</li>' % (result,))
         self.response.write('</ul>')
+
+        self.response.write('<span>Unavailable tracks:</span>')
+        self.response.write('<ul>')
+        for result in unavailable:
+            self.response.write('<li>%s</li>' % (result,))
+        self.response.write('</ul>')
+
         self.response.write(MAIN_PAGE_FOOTER_TEMPLATE)
 
     def fetch(self, url):
@@ -56,16 +63,20 @@ class MainPage(webapp2.RequestHandler):
         baseurl = 'https://api.spotify.com/v1/search?'
         search = '%s %s %s' % (query if query else '', 'artist:%s' % artist if artist else '', 'track:%s' % track if track else '')
         query = urllib.urlencode({'q': search.strip(), 'type': 'track'})
-        result = []
+        available = []
+        unavailable = []
         response = json.loads(urllib.urlopen(baseurl + query).read())
         for item in response['tracks']['items']:
             open_link = item['external_urls']['spotify']
             artists = ', '.join([artist['name'] for artist in item['artists']])
             track = item['name']
             album = item['album']['name']
-            catalog = 'available' if 'US' in item['album']['available_markets'] else 'unavailable'
-            result.append('<a href="%s">%s - %s [%s] (%s)</a>' % (open_link, artists, track, album, catalog))
-        return result
+            if 'US' in item['album']['available_markets']:
+                available.append('<a href="%s">%s - %s [%s]</a>' % (open_link, artists, track, album))
+            else:
+                unavailable.append('<a href="%s">%s - %s [%s]</a>' % (open_link, artists, track, album))
+
+        return available, unavailable
 
 
 application = webapp2.WSGIApplication([
