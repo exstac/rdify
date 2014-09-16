@@ -1,7 +1,8 @@
 import cgi
-import urllib
-import oauth2 as oauth
 import json
+import oauth2 as oauth
+import re
+import urllib
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -11,7 +12,7 @@ import webapp2
 MAIN_PAGE_HEADER_TEMPLATE = """\
 <html><body>
     <form action="/" method="post">
-      <div><input style="width:200pt" type=text name="content"></input> <input type="submit" name="rdio" value="Rdio link"><input type="submit" name="spotify" value="Search Spotify"></div>
+      <div><input style="width:200pt" type=text name="content"></input> <input type="submit" name="content" value="Search"></div>
     </form>
 """
 MAIN_PAGE_FOOTER_TEMPLATE = """\
@@ -26,12 +27,11 @@ class MainPage(webapp2.RequestHandler):
 
     def post(self):
         self.response.write(MAIN_PAGE_HEADER_TEMPLATE)
-        if self.request.get('spotify'):
-            query = self.request.get('content')
-            available, unavailable = self.spotify(query=query)
+        query = self.request.get('content')
+        if re.match('http[s]*://(rd\.io|www\.rdio\.com)', query):
+            available, unavailable = self.fetch(query)
         else:
-            uri = self.request.get('content')
-            available, unavailable = self.fetch(uri)
+            available, unavailable = self.spotify(query=query)
 
         self.response.write('<p>Found %d track%s:</p>' % (len(available), 's' if len(available) > 1 else ''))
         self.response.write('<ul>')
