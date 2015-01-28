@@ -10,13 +10,22 @@ from google.appengine.ext import ndb
 import webapp2
 
 MAIN_PAGE_HEADER_TEMPLATE = """\
-<html><body>
-    <form action="/" method="post">
-      <div><input style="width:200pt" type=text name="content"></input> <input type="submit" name="content" value="Search"></div>
-    </form>
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/static/css/main.css" />
+<head/>
+<body>
+  <div class="header">
+    <img src="/static/images/rdio.png">
+    <img src="/static/images/arrow.png">
+    <img src="/static/images/spotify.jpg">
+  </div>
+  <form action="/" method="post">
+    <div><input style="width:200pt" type=text name="content"></input> <input type="submit" name="content" value="Search"></div>
+  </form>
 """
 MAIN_PAGE_FOOTER_TEMPLATE = """\
-  </body>
+</body>
 </html>
 """
 

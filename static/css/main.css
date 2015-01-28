@@ -1,0 +1,9 @@
+.header {
+  overflow: auto;
+  margin-bottom: 30px;
+}
+
+.header img {
+  float: left;
+  height: 48px;
+}
