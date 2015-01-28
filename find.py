@@ -62,7 +62,7 @@ class MainPage(webapp2.RequestHandler):
     def spotify(self, query=None, artist=None, track=None):
         baseurl = 'https://api.spotify.com/v1/search?'
         search = '%s %s %s' % (query if query else '', 'artist:%s' % artist if artist else '', 'track:%s' % track if track else '')
-        query = urllib.urlencode({'q': search.strip(), 'type': 'track'})
+        query = urllib.urlencode({'q': search.strip().encode('utf-8'), 'type': 'track'})
         available = []
         unavailable = []
         response = json.loads(urllib.urlopen(baseurl + query).read())
