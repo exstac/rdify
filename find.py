@@ -18,7 +18,7 @@ MAIN_PAGE_HEADER_TEMPLATE = """\
   <div class="header">
     <img src="/static/images/rdio.png">
     <img src="/static/images/arrow.png">
-    <img src="/static/images/spotify.jpg">
+    <img src="/static/images/spotify.png">
   </div>
   <form action="/" method="post">
     <div><input style="width:200pt" type=text name="content"></input> <input type="submit" name="content" value="Search"></div>
